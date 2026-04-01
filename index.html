@@ -1,0 +1,229 @@
+<!-- COMPLETE index.html -->
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Flowboard — Kanban</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Mono:ital,wght@0,300;0,400;0,500;1,400&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <div class="logo">
+        <span class="logo-icon">⬡</span>
+        <span class="logo-text">Flowboard</span>
+      </div>
+      <button class="sidebar-toggle" id="sidebarToggle" title="Toggle Sidebar">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>
+      </button>
+    </div>
+
+    <!-- Boards -->
+    <div class="sidebar-section">
+      <div class="sidebar-section-header">
+        <span>Boards</span>
+        <button class="icon-btn" id="newBoardBtn" title="New Board">+</button>
+      </div>
+      <ul class="board-list" id="boardList"></ul>
+    </div>
+
+    <!-- Insights -->
+    <div class="sidebar-section">
+      <div class="sidebar-section-header">
+        <span>Insights</span>
+        <span class="insights-badge" id="insightsBadge"></span>
+      </div>
+      <div class="insights-panel" id="insightsPanel"></div>
+    </div>
+
+    <!-- Analytics -->
+    <div class="sidebar-section">
+      <div class="sidebar-section-header"><span>Analytics</span></div>
+      <div class="analytics-panel" id="analyticsPanel"></div>
+    </div>
+
+    <!-- WIP Limits -->
+    <div class="sidebar-section">
+      <div class="sidebar-section-header">
+        <span>WIP Limits</span>
+      </div>
+      <div class="wip-panel" id="wipPanel"></div>
+    </div>
+
+    <div class="sidebar-footer">
+      <button class="theme-toggle" id="themeToggle">
+        <span class="theme-icon">☀️</span>
+        <span class="theme-label">Light Mode</span>
+      </button>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <div class="main-wrapper" id="mainWrapper">
+
+    <!-- TOP BAR -->
+    <header class="topbar">
+      <div class="topbar-left">
+        <button class="sidebar-toggle-mobile" id="sidebarToggleMobile">☰</button>
+        <h1 class="board-title-display" id="boardTitleDisplay">Loading…</h1>
+      </div>
+      <div class="topbar-center">
+        <div class="search-wrap">
+          <svg class="search-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+          <input type="text" id="searchInput" placeholder="Search tasks…" class="search-input" />
+          <kbd class="search-kbd">⌘K</kbd>
+        </div>
+      </div>
+      <div class="topbar-right">
+        <select class="filter-select" id="filterPriority">
+          <option value="">All Priority</option>
+          <option value="high">🔴 High</option>
+          <option value="medium">🟡 Medium</option>
+          <option value="low">🟢 Low</option>
+        </select>
+        <select class="filter-select" id="filterOverdue">
+          <option value="">All Tasks</option>
+          <option value="overdue">⚠ Overdue</option>
+          <option value="today">📅 Due Today</option>
+        </select>
+        <button class="btn btn-ghost" id="importBtn" title="Import JSON">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          Import
+        </button>
+        <button class="btn btn-ghost" id="exportBtn" title="Export JSON">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+          Export
+        </button>
+        <button class="btn btn-primary" id="addTaskBtn">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          Add Task
+        </button>
+      </div>
+    </header>
+
+    <!-- BOARD -->
+    <main class="board-area" id="boardArea">
+      <div class="columns-container" id="columnsContainer"></div>
+      <button class="add-column-btn" id="addColumnBtn">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        Add Column
+      </button>
+    </main>
+
+  </div>
+
+  <!-- TASK MODAL -->
+  <div class="modal-overlay" id="taskModal" aria-hidden="true">
+    <div class="modal" role="dialog" aria-labelledby="modalTitle">
+      <div class="modal-header">
+        <h2 class="modal-title" id="modalTitle">New Task</h2>
+        <button class="modal-close" id="modalClose">✕</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label class="form-label">Title <span class="required">*</span></label>
+          <input type="text" id="taskTitle" class="form-input" placeholder="What needs to be done?" maxlength="120" />
+          <span class="char-count" id="titleCharCount">0/120</span>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Description</label>
+          <textarea id="taskDesc" class="form-textarea" placeholder="Add details…" maxlength="500" rows="3"></textarea>
+          <span class="char-count" id="descCharCount">0/500</span>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Priority</label>
+            <select id="taskPriority" class="form-select">
+              <option value="low">🟢 Low</option>
+              <option value="medium" selected>🟡 Medium</option>
+              <option value="high">🔴 High</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Due Date</label>
+            <input type="date" id="taskDueDate" class="form-input" />
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Tags <span class="form-hint">(comma separated)</span></label>
+          <input type="text" id="taskTags" class="form-input" placeholder="design, frontend, bug…" />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Column</label>
+          <select id="taskColumn" class="form-select"></select>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-danger" id="deleteTaskBtn" style="display:none">Delete</button>
+        <div class="modal-footer-right">
+          <button class="btn btn-ghost" id="cancelTaskBtn">Cancel</button>
+          <button class="btn btn-primary" id="saveTaskBtn">Create Task</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- COLUMN MODAL -->
+  <div class="modal-overlay" id="columnModal" aria-hidden="true">
+    <div class="modal modal-sm" role="dialog">
+      <div class="modal-header">
+        <h2 class="modal-title" id="columnModalTitle">New Column</h2>
+        <button class="modal-close" id="columnModalClose">✕</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label class="form-label">Column Name <span class="required">*</span></label>
+          <input type="text" id="columnName" class="form-input" placeholder="e.g. Review, Blocked…" maxlength="40" />
+        </div>
+        <div class="form-group">
+          <label class="form-label">WIP Limit</label>
+          <input type="number" id="columnWipLimit" class="form-input" placeholder="0 = unlimited" min="0" max="99" />
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-danger" id="deleteColumnBtn" style="display:none">Delete Column</button>
+        <div class="modal-footer-right">
+          <button class="btn btn-ghost" id="cancelColumnBtn">Cancel</button>
+          <button class="btn btn-primary" id="saveColumnBtn">Create Column</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- BOARD MODAL -->
+  <div class="modal-overlay" id="boardModal" aria-hidden="true">
+    <div class="modal modal-sm" role="dialog">
+      <div class="modal-header">
+        <h2 class="modal-title">New Board</h2>
+        <button class="modal-close" id="boardModalClose">✕</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label class="form-label">Board Name <span class="required">*</span></label>
+          <input type="text" id="boardNameInput" class="form-input" placeholder="Personal, Work, Project…" maxlength="40" />
+        </div>
+      </div>
+      <div class="modal-footer">
+        <div class="modal-footer-right">
+          <button class="btn btn-ghost" id="cancelBoardBtn">Cancel</button>
+          <button class="btn btn-primary" id="saveBoardBtn">Create Board</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Hidden file input for import -->
+  <input type="file" id="importFileInput" accept=".json" style="display:none" />
+
+  <!-- Toast -->
+  <div class="toast-container" id="toastContainer"></div>
+
+  <script src="script.js"></script>
+</body>
+</html>
